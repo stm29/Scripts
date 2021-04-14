@@ -1,0 +1,18 @@
+Before Doing this,Please check running services by:
+sudo systemctl list-units --type=service | grep running
+
+List of all Kernels:
+dpkg --list |egrep linux\\-*.*-[1-9]\\.[1-9]| awk '{print $2}'
+
+List to be removed:
+dpkg --list |egrep linux\\-*.*-[1-9]\\.[1-9]| awk '{print $2}' | egrep -v $( cut -c -10 <<< $(uname -r)  )
+
+Removing:
+for kernel in $( dpkg --list |egrep linux\\-*.*-[1-9]\\.[1-9]| awk '{print $2}' | egrep -v $( cut -c -10 <<< $(uname -r)  )); do apt-get -y purge ${kernel} ; done
+
+or 
+
+for kernel in $(dpkg --list |egrep linux\\-*.*-[1-9]\\.[1-9]| awk '{print $2}' | egrep -v $(echo $(uname -r) | sed 's/-aws\|-generic//g')); do apt-get -y purge ${kernel} ; done
+
+After Doing this,Please check running services by:
+sudo systemctl list-units --type=service | grep running
